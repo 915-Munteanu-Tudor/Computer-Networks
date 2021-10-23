@@ -1,0 +1,232 @@
+#path in linux virtual machine la scratch files: ~/.config/JetBrains/PyCharm2021.2/scratches
+#until ex1, from radu dragos(exrmple) ex 1.1 -> 1.5 
+"""
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(10)
+print(b)
+cs.send(b + b)
+cs.close()
+"""
+"""
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(10)
+print(b)
+cs.send(str(len(b)).encode())
+cs.close()
+"""
+"""
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(10)
+print(b)
+vocale=0
+for letter in str(b.decode()):
+    if letter in 'aeiou':
+        vocale+=1
+cs.send(str(vocale).encode())
+cs.close()
+"""
+
+"""
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(10)
+print(b)
+vocale=0
+for letter in str(b.decode()):
+    if letter in 'aeiou':
+        vocale+=1
+cs.send(str(len(str(b.decode()))-vocale).encode())
+cs.close()
+"""
+
+#from lab1 daddi ex 1 ->10
+
+"""
+#ex1
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(25)
+print(b)
+sum=0
+array = str(b.decode()).split(' ')
+#print(array)
+for letter in array:
+    sum += int(letter)
+cs.send(str(sum).encode())
+cs.close()
+"""
+
+"""
+#ex2
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(40)
+print(b.decode())
+nr_spaces = b.decode().count(' ')
+cs.send(str(nr_spaces).encode())
+cs.close()
+"""
+
+"""
+#ex3
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(25)
+print(b)
+array = str(b.decode())
+newString = ""
+for word in reversed(array):
+    newString += word
+cs.send(newString.encode())
+cs.close()
+"""
+"""
+#ex4
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(40)
+c = cs.recv(40)
+print(b)
+print(c)
+array = sorted(str(b.decode()) + str(c.decode()))
+string1=""
+for i in array:
+    string1 += i
+cs.send(string1.encode())
+cs.close()
+"""
+"""
+#ex5
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(40)
+print(b)
+string1 = ""
+for i in range(2, int(b.decode())//2):
+    if int(b.decode()) % i == 0:
+        string1 += str(i)
+        string1 += " "
+cs.send(string1[0:len(string1)-1].encode())
+cs.close()
+"""
+
+"""
+#ex6
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(40)
+c=cs.recv(40)
+print(b)
+print(c)
+string1 = ""
+chr = str(c.decode())
+src = str(b.decode())
+indexes = [x for x, v in enumerate(src) if v == chr]
+for i in indexes:
+    string1 += str(i)
+    string1 += " "
+
+cs.send(string1[0:len(string1)-1].encode())
+cs.close()
+"""
+
+"""
+#ex7
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",7777))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(30)
+array = str(b.decode()).split(' ')
+beg = int(array[1])
+end = int(array[2])
+src = array[0]
+string1=""
+for i in range(beg,end):
+    string1 += src[i]
+cs.send(string1.encode())
+cs.close()
+"""
+
+"""
+#ex8+9
+from collections import OrderedDict
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",6666))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(30)
+c=cs.recv(30)
+arr1 = str(b.decode())
+arr2 = str(c.decode())
+str1=""
+for i in arr1:
+    #for ex9 put: "not in arr2" instead
+    if i in arr2:
+        str1 += str(i)
+od = OrderedDict.fromkeys(str1).keys()
+cs.send("".join(od).encode())
+cs.close()
+"""
+
+"""
+#ex10
+import socket
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((b"0.0.0.0",6666))
+s.listen(5)
+cs,addr=s.accept()
+b=cs.recv(45)
+c=cs.recv(45)
+arr1 = str(b.decode())
+arr2 = str(c.decode())
+str1=""
+dct = {}
+print(arr1)
+print(arr2)
+for i in range(len(arr1)):
+    if arr1[i] == arr2[i] and arr1[i] in dct.keys():
+        dct[arr1[i]] += 1
+    elif arr1[i] == arr2[i] and arr1[i] not in dct.keys():
+        dct[arr1[i]] = 1
+print(dct)
+final = max(dct.values())
+strg1 = str(list(dct.keys())[list(dct.values()).index(final)]) + " appears of " + str(final) + " times"
+cs.send(strg1.encode())
+cs.close()
+"""
