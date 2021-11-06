@@ -1,0 +1,142 @@
+"""
+#ex2
+import time
+import socket
+import os
+from shutil import copyfile
+import sys
+from threading import Thread
+
+
+def f(cs, i):
+    print("Procesez client" + str(i))
+    data = cs.recv(4096)
+    time.sleep(6)
+    string = data.decode()
+    #string = string.split('/')
+    if (os.path.exists(string) == False):
+        print("-1\n No content!")
+    else:
+        with open(string, "r") as f:
+            print("The length of the file is:" + str(len(f.readlines())) + "\n")
+        log = open(string, "r").read()
+        print(log)
+        copyfile(string, string + "-copy")
+
+    cs.close()
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+s.bind(("0.0.0.0", 7779))
+s.listen(5)
+i = 0
+while True:
+    s.settimeout(10)
+    i = i + 1
+    try:
+        cs, addr = s.accept()
+        t = Thread(target=f, args=(cs, i,))
+        t.start()
+    except socket.timeout as e:
+        print(e,': no connections after 10 seconds...')
+        s.close()
+        break
+    t.join()
+"""
+"""
+#ex3(run the clients from multiple tabs)
+import time
+import socket
+import random
+import struct
+import threading
+
+
+lock = threading.Lock()
+threads = {}
+
+
+def f(cs, i):
+    print("Procesez client" + str(i))
+    crf = struct.unpack('!f', cs.recv(100))[0]
+    lock.acquire()
+    threads[cs] = crf
+    lock.release()
+    print(crf)
+
+
+if __name__ == "__main__":
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("0.0.0.0", 7778))
+        sock.listen(5)
+        srf = random.uniform(0.0, 10000.0)
+        i = 0
+        while True:
+            try:
+                sock.settimeout(10)
+                i = i + 1
+                cs, addr = sock.accept()
+            except socket.timeout as e:
+                print(e, ': no connections after 10 seconds...')
+                closest_cs = None
+                closest_diff = None
+                lock.acquire()
+                for cs, crf in threads.items():
+                    if closest_diff is None or srf - crf < closest_diff:
+                        closest_diff = srf - crf
+                        closest_cs = cs
+                for cs in threads.keys():
+                    if cs == closest_cs:
+                        msg1 = "You have the best approximation, error " + str(closest_diff)
+                        cs.sendall(msg1.encode())
+                    else:
+                        msg2 = "You lost!"
+                        cs.sendall(msg2.encode())
+                lock.release()
+
+
+
+
+
+
+                break
+            else:
+                t = threading.Thread(target=f, args=(cs, i))
+                lock.acquire()
+                threads[cs] = t
+                lock.release()
+                t.start()
+            finally:
+                sock.settimeout(None)
+
+"""
+"""
+#ex5
+import socket
+import random
+import struct
+import threading
+import requests
+
+
+string = ""
+
+def f(cs):
+    print("Procesez client")
+    string = cs.recv(4096).decode()
+    print(string)
+    response = str(requests.get(string, data=string1))
+    print(response)
+    cs.sendall(response.encode())
+
+
+if __name__ == "__main__":
+
+    string1 = b"GET / HTTP/1.0\n\n"
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("0.0.0.0", 7779))
+        sock.listen(5)
+        cs, addr = sock.accept()
+        t = threading.Thread(target=f, args=(cs, ))
+        t.start()
+"""

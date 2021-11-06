@@ -1,0 +1,49 @@
+"""
+#ex2.The client sends the complete path to a file. The server returns back the length of the file and its content in the
+#case the file exists. When the file does not exist the server returns a length of -1 and no content. The client will 
+#store the content in a file with the same name as the input file with the suffix –copy appended (ex: for f.txt => f.txt-copy).
+import socket
+import struct
+import json
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((b"192.168.78.132", 7779))
+
+path = input("Give a file path:")
+s.send(path.encode())
+
+s.close()
+"""
+"""
+#3.   The server chooses a random float number <SRF>. Run multiple clients. Each client chooses a random float number
+# <CRF> and send it to the server. When the server does not receive any incoming connection for at least 10 seconds it
+# chooses the client that has guessed the best approximation (is closest) for its own number and sends it back the message
+# “You have the best guess with an error of <SRV>-<CRF>”. It also sends to each other client the string “You lost !”.
+# The server closes all connections after this.
+
+import socket
+import struct
+
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock.connect(('192.168.78.132', 7778))
+    sock.sendall(struct.pack('!f', float(input("Give a float number:"))))
+    print(sock.recv(100).decode())
+    sock.close()
+"""
+#5.   The client sends a domain name taken from the command line (Ex: www.google.com) to the server. The server opens a 
+# TCP connection to the IP address corresponding to the received domain name on port 80 (called HTTP-Srv). It sends on 
+# the TCP connection the string: “GET / HTTP/1.0\n\n” and relays the answer back to the client. When HTTP-Srv closes 
+# connection to the server, the server closes the connection to the client at its turn.
+
+
+import socket
+import struct
+
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock.connect(('192.168.78.133', 7779))
+    sock.send(input("Give a domain name:").encode())
+    print(sock.recv(100).decode())
+    sock.close()
+"""

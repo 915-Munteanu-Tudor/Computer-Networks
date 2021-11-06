@@ -1,0 +1,39 @@
+FROM LAB1:
+"""
+1.A client sends to the server an array of numbers. Server returns the sum of the numbers.
+
+import socket
+import struct
+import json
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((b"192.168.78.132", 7779))
+
+array = list()
+
+nr = int(input("How many numbers in array? "))
+for i in range(0, nr):
+    x = input("array[" + str(i) + "] = ")
+    array.append(x)
+
+data = json.dumps({"a": array})
+s.send(data.encode())
+
+s.close()
+"""
+"""
+#2.A client sends to the server a string. The server returns the count of spaces in the string.
+
+import socket
+import struct
+import json
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((b"192.168.78.132", 7779))
+
+string = input(str("Give me a string: "))
+
+s.send(string.encode())
+
+s.close()
+"""

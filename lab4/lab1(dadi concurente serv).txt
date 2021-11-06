@@ -1,0 +1,73 @@
+FROM LAB1:
+"""
+#lab1 dadi ex1
+import time
+import socket
+import struct
+import json
+from threading import Thread
+
+
+def f(cs, i):
+    print("Procesez client" + str(i))
+    data = cs.recv(4096)
+    time.sleep(10)
+
+    data = json.loads(data.decode())
+    array = data.get("a")
+    print(array)
+
+    # send the number of spaces
+    s=0
+    for i in array:
+        s += int(i)
+    print(s)
+
+    cs.close()
+
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(("0.0.0.0", 7779))
+s.listen(5)
+i = 0
+while True:
+    i = i + 1
+    cs, addr = s.accept()
+    t = Thread(target=f, args=(cs, i,))
+    t.start()
+"""
+"""
+#lab1 dadi ex2
+import time
+import socket
+import struct
+import json
+from threading import Thread
+
+
+def f(cs, i):
+    print("Procesez client" + str(i))
+    data = cs.recv(4096)
+    time.sleep(10)
+
+    string = data.decode()
+    print(string)
+    spaces = 0
+    for i in string:
+        if i == ' ':
+            spaces += 1
+    # send the number of spaces
+    print(spaces)
+    cs.close()
+
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(("0.0.0.0", 7779))
+s.listen(5)
+i = 0
+while True:
+    i = i + 1
+    cs, addr = s.accept()
+    t = Thread(target=f, args=(cs, i,))
+    t.start()
+"""
