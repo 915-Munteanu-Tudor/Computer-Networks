@@ -1,0 +1,36 @@
+import socket
+import struct
+import threading
+
+mutex = threading.Lock()
+clients = list()
+
+
+def bytes_to_addr(addr):
+    return socket.inet_ntoa(addr[:4]), struct.unpack('H', addr[4:])[0]
+
+def f1(s):
+    while 1:
+
+        data = s.recv(1024).decode()
+        print(data)
+        clients.append(data)
+
+
+def f2(s):
+    while 1:
+        msg = input()
+        s.send(msg.encode())
+
+listen_to = ("192.168.78.134", 5556)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(listen_to)
+msg = "Hello"
+s.send(msg.encode())
+t1 = threading.Thread(target=f1, args=(s,))
+t1.start()
+t2 = threading.Thread(target=f2, args=(s,))
+t2.start()
+t1.join()
+t2.join()
+s.close()
