@@ -1,0 +1,22 @@
+# 1.   The client sends periodical PING datagrams with a random content to a <server> and <port> specified in command 
+# line. The server returns back (echoes) the same packets (content). The client checks the content of the received 
+# packets to match what was sent and computes the round trip time and displays it to the user – for each sent packet.
+
+
+import socket
+import datetime
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+msg = "hey"
+now = datetime.datetime.now().time()
+s.sendto(str.encode(msg), ("192.168.78.134", 7777))
+msg1, adr = s.recvfrom(10)
+
+then = datetime.datetime.now().time()
+date = datetime.date(1, 1, 1)
+datetime1 = datetime.datetime.combine(date, now)
+datetime2 = datetime.datetime.combine(date, then)
+time_elapsed = datetime2 - datetime1
+
+if msg == msg1.decode():
+    print(time_elapsed)

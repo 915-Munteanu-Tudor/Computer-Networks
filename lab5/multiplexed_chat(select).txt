@@ -1,0 +1,74 @@
+
+Python Multiplexed Chat Server – using select
+
+import select, socket
+s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setblocking(False)
+s.bind(('0.0.0.0', 5557))
+s.listen(5)
+
+ins = [s]
+outs = []
+msg=[]
+while ins:
+    r,w,e = select.select(ins,outs,ins)
+    for ss in r:
+        if ss==s:
+            cs,addr=ss.accept()
+            print("Client from:",addr)
+            ins.append(cs)
+        else:
+             print("Data from client")
+             data=ss.recv(100)
+             if data:
+                txt=ss.getpeername()[0]+":"+str(ss.getpeername()[1])+":"+data.decode()
+                print(txt)
+                msg.append(txt)
+                if ss not in outs:
+                    outs.append(ss)
+             else :
+                print("Null data, client is gone")
+                ins.remove(ss)
+                if ss in outs:
+                    outs.remove(ss)
+                ss.close()
+    for ss in e:
+        print("Error")
+        ins.remove (ss)
+        if ss in outs:
+          outs.remove(ss)
+        ss.close()
+    for ss in w:
+        for i in msg:
+            ss.send(i.encode())
+    msg=[]
+
+Python client for the Multiplexed Chat Server
+import socket
+import os
+import threading
+
+mutex = threading.Lock()
+
+def f1(s):
+    while 1:
+        data = s.recv(100)
+        print(data.decode())
+
+def f2(s):
+    while 1:
+        msg = input()
+        s.send(msg.encode())
+
+listen_to = ("192.168.78.134", 5556)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(listen_to)
+msg = "Hello"
+s.send(msg.encode())
+t1 = threading.Thread(target=f1, args=(s,))
+t1.start()
+t1.join()
+t2 = threading.Thread(target=f2, args=(s,))
+t2.start()
+t2.join()
+s.close()

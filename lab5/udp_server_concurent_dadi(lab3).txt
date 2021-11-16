@@ -1,0 +1,63 @@
+#udp concurent
+import socket
+import threading
+import time
+from datetime import datetime
+
+
+class UDPServerMultiClient:
+
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self.sock = None
+        self.socket_lock = threading.Lock()
+
+    def printwt(self, msg):
+        current_date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'[{current_date_time}] {msg}')
+
+    def configure_server(self):
+        self.printwt('Creating socket...')
+        self.printwt('Socket created')
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind((self.host, self.port))
+        self.printwt(f'Binding server to {self.host}:{self.port}...')
+        self.printwt(f'Server binded to {self.host}:{self.port}')
+
+    def handle_request(self, data, client_address):
+        received = data.decode()
+        response = received
+
+        self.printwt(f'[ Reguest from {client_address}]')
+        self.printwt(f'[ Received the message:{received}]')
+        with self.socket_lock:
+            self.sock.sendto(response.encode(), client_address)
+
+    def shutdown_server(self):
+        self.printwt('shutting down server...')
+        self.sock.close()
+
+    def wait_client(self):
+        try:
+            while True:
+                try:
+                    data, client_address = self.sock.recvfrom(1024)
+                    c_thread = threading.Thread(target = self.handle_request, args = (data, client_address))
+                    c_thread.daemon = True
+                    c_thread.start()
+                except OSError as err:
+                    self.printwt(err)
+
+        except KeyboardInterrupt:
+            self.shutdown_server()
+
+
+def main():
+    udp_server_multi_client = UDPServerMultiClient('0.0.0.0', 7777)
+    udp_server_multi_client.configure_server()
+    udp_server_multi_client.wait_client()
+
+
+if __name__ == '__main__':
+    main()
